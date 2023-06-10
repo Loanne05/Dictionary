@@ -3,46 +3,48 @@ import { ScrollView } from 'react-native';
 import { StyleSheet, Text, TouchableOpacity, View, Image } from 'react-native';
 import { TextInput } from 'react-native';
 import { StatusBar } from 'react-native';
+import axios from 'axios';
 
 import * as Speech from "expo-speech";
 
 export default function App() {
-  const [newWord, setNewWord] = useState("") //store the words the user entered in the textInput
-  const [checkedWord, setCheckedWord] = useState("")
-  const [definition, setDefinition] = useState("")
-  const [example, setExample] = useState("")
+  const [newWord, setNewWord] = useState(""); // Store the words the user entered in the textInput
+  const [checkedWord, setCheckedWord] = useState("");
+  const [definition, setDefinition] = useState("");
+  const [example, setExample] = useState("");
   const url = "https://api.dictionaryapi.dev/api/v2/entries/en/" + newWord;
 
   const searchWord = (enteredWord) => {
-    setNewWord(enteredWord)
-  }
+    setNewWord(enteredWord);
+  };
 
   const getInfo = () => {
-    return fetch(url)
-      .then((data) => {
-        return data.json();
-      })
+    axios.get(url) // Use Axios to make the API request
       .then((response) => {
-        var word = response[0].word
+        var word = response.data[0].word;
         setCheckedWord(word);
 
-        var def = response[0].meanings[0].definitions[0].definition;
-        setDefinition(def)
+        var def = response.data[0].meanings[0].definitions[0].definition;
+        setDefinition(def);
 
-        var eg = response[0].meanings[0].definitions[0].example;
-        setExample(eg)
+        var eg = response.data[0].meanings[0].definitions[0].example;
+        setExample(eg);
       })
-  }
-  const speak=()=>{
-    Speech.speak(checkedWord)
-  }
+      .catch((error) => {
+        console.log(error);
+      });
+  };
 
-  const clear=()=>{
+  const speak = () => {
+    Speech.speak(checkedWord);
+  };
+
+  const clear = () => {
     setCheckedWord("");
     setDefinition("");
     setExample("");
-    setNewWord("");;
-  }
+    setNewWord("");
+  };
 
   return (
     <ScrollView style={styles.container}>
@@ -70,7 +72,7 @@ export default function App() {
 
           <TouchableOpacity
             onPress={() => {
-              getInfo()
+              getInfo();
             }}
           >
             <Text style={styles.goButton}>
@@ -79,8 +81,8 @@ export default function App() {
           </TouchableOpacity>
 
           <TouchableOpacity
-            onPress={()=>{
-              clear()
+            onPress={() => {
+              clear();
             }}
           >
             <Text style={styles.clearButton}>
@@ -88,9 +90,9 @@ export default function App() {
             </Text>
           </TouchableOpacity>
 
-          <TouchableOpacity 
-            onPress={()=>{
-              speak()
+          <TouchableOpacity
+            onPress={() => {
+              speak();
             }}
           >
             <Image
@@ -104,7 +106,7 @@ export default function App() {
           <Text>
             Entered Word: {checkedWord}
           </Text>
-            
+
           <Text>
             Definition: {definition}
           </Text>
@@ -118,6 +120,7 @@ export default function App() {
     </ScrollView>
   );
 }
+
 
 const styles = StyleSheet.create({
   container: {
@@ -159,6 +162,129 @@ const styles = StyleSheet.create({
     paddingHorizontal: 30
   }
 });
+
+{/*Fetch*/}
+// import { useEffect, useState } from 'react';
+// import { ScrollView } from 'react-native';
+// import { StyleSheet, Text, TouchableOpacity, View, Image } from 'react-native';
+// import { TextInput } from 'react-native';
+// import { StatusBar } from 'react-native';
+
+// import * as Speech from "expo-speech";
+
+// export default function App() {
+//   const [newWord, setNewWord] = useState("") //store the words the user entered in the textInput
+//   const [checkedWord, setCheckedWord] = useState("")
+//   const [definition, setDefinition] = useState("")
+//   const [example, setExample] = useState("")
+//   const url = "https://api.dictionaryapi.dev/api/v2/entries/en/" + newWord;
+
+//   const searchWord = (enteredWord) => {
+//     setNewWord(enteredWord)
+//   }
+
+  // const getInfo = () => {
+  //   return fetch(url)
+  //     .then((data) => {
+  //       return data.json();
+  //     })
+  //     .then((response) => {
+  //       var word = response[0].word
+  //       setCheckedWord(word);
+
+  //       var def = response[0].meanings[0].definitions[0].definition;
+  //       setDefinition(def)
+
+  //       var eg = response[0].meanings[0].definitions[0].example;
+  //       setExample(eg)
+  //     })
+  // }
+//   const speak=()=>{
+//     Speech.speak(checkedWord)
+//   }
+
+//   const clear=()=>{
+//     setCheckedWord("");
+//     setDefinition("");
+//     setExample("");
+//     setNewWord("");;
+//   }
+
+//   return (
+//     <ScrollView style={styles.container}>
+//       <StatusBar style={'auto'} />
+//       <View
+//         style={{ alignItems: 'center', }}
+//       >
+//         <TextInput
+//           style={styles.inputbox}
+//           placeholder='Search a word'
+//           placeholderTextColor='gray'
+//           clearButtonMode='always'
+//           onChangeText={searchWord}
+//           value={newWord}
+//         />
+//         <View
+//           style={{
+//             flexDirection: 'row',
+//             justifyContent: 'space-around',
+//             width: '80%',
+//             marginVertical: 10,
+//             alignItems: 'center'
+//           }}
+//         >
+
+//           <TouchableOpacity
+//             onPress={() => {
+//               getInfo()
+//             }}
+//           >
+//             <Text style={styles.goButton}>
+//               Go
+//             </Text>
+//           </TouchableOpacity>
+
+//           <TouchableOpacity
+//             onPress={()=>{
+//               clear()
+//             }}
+//           >
+//             <Text style={styles.clearButton}>
+//               Clear
+//             </Text>
+//           </TouchableOpacity>
+
+//           <TouchableOpacity 
+//             onPress={()=>{
+//               speak()
+//             }}
+//           >
+//             <Image
+//               source={require('./assets/audio.png')}
+//               style={styles.speakerButton}
+//             />
+//           </TouchableOpacity>
+//         </View>
+
+//         <View style={styles.dictcontainer} >
+//           <Text>
+//             Entered Word: {checkedWord}
+//           </Text>
+            
+//           <Text>
+//             Definition: {definition}
+//           </Text>
+
+//           <Text>
+//             Example: {example}
+//           </Text>
+//         </View>
+//       </View>
+
+//     </ScrollView>
+//   );
+// }
+
 
 //calculator
 // import React, { useState } from 'react';
